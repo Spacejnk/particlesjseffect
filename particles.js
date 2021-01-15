@@ -24,16 +24,16 @@ class Particle {
     constructor(x, y, directionX, directionY, size, color) {
         this.x = x;
         this.y = y;
-        this.directionX;
-        this.directionY;
-        this.size;
-        this.color;
+        this.directionX = directionX;
+        this.directionY = directionY;
+        this.size = size;
+        this.color = color;
     }
     // draw method for each particle 
     draw() {
         ctx.beginPath();
         ctx.arc( this.x, this.y, this.size, 0, Math.PI * 2, false);
-        ctx.fillStyle = '#fd86d1';
+        ctx.fillStyle = '#85e6d4';
         ctx.fill();
     }
 
@@ -79,14 +79,14 @@ class Particle {
 // create particle array
 function init() {
     particlesArray = [];
-    let numberOfParticles = (canvas.height * canvas.width) / 9000;
+    let numberOfParticles = (canvas.height * canvas.width) / 900;
     for (let i = 0; i < numberOfParticles; i++) {
         let size = (Math.random() * 5) + 1;
         let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
         let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
         let directionX = (Math.random() * 5) - 2.5;
         let directionY = (Math.random() * 5) - 2.5;
-        let color = '#85e6d4';
+        let color = 'red';
 
         particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
 
@@ -100,6 +100,28 @@ function animate() {
 
     for(let i = 0; i < particlesArray.length; i++) {
         particlesArray[i].update();
+    }
+    connect();
+}
+
+// check if particles are close enough to draw lines and connect
+function connect() {
+    for (let a = 0; a < particlesArray.length; a++) {
+        for (let b = a; b < particlesArray.length; b++) {
+            let distance = ((particlesArray[a].x - particlesArray[b].x) 
+            * (particlesArray[a].x - particlesArray[b].x))
+            + ((particlesArray[a].y - particlesArray[b].y) *
+             (particlesArray[a].y) - particlesArray[b].y);
+             if (distance < (canvas.width/7) * (canvas.height/7)) {
+                ctx.strokeStyle = 'rgba(133, 230, 212)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                ctx.stroke();
+             }
+        }
+
     }
 }
 
