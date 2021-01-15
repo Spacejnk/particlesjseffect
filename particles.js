@@ -1,7 +1,7 @@
 const canvas = document.getElementById('canvas1');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
-canvas.width = window.innerHeight;
+canvas.height = window.innerHeight;
 
 let particlesArray;
 
@@ -79,7 +79,7 @@ class Particle {
 // create particle array
 function init() {
     particlesArray = [];
-    let numberOfParticles = (canvas.height * canvas.width) / 900;
+    let numberOfParticles = (canvas.height * canvas.width) / 9000;
     for (let i = 0; i < numberOfParticles; i++) {
         let size = (Math.random() * 5) + 1;
         let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
@@ -89,6 +89,27 @@ function init() {
         let color = 'red';
 
         particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+
+    }
+}
+
+// check if particles are close enough to draw lines and connect
+function connect() {
+    for (let a = 0; a < particlesArray.length; a++) {
+        for (let b = a; b < particlesArray.length; b++) {
+            let distance = ((particlesArray[a].x - particlesArray[b].x) 
+            * (particlesArray[a].x - particlesArray[b].x))
+            + ((particlesArray[a].y - particlesArray[b].y) *
+             (particlesArray[a].y - particlesArray[b].y));
+             if (distance < (canvas.width/7) * (canvas.height/7)) {
+                ctx.strokeStyle = 'rgba(133, 230, 212)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                ctx.stroke();
+             }
+        }
 
     }
 }
@@ -103,27 +124,13 @@ function animate() {
     }
     connect();
 }
-
-// check if particles are close enough to draw lines and connect
-function connect() {
-    for (let a = 0; a < particlesArray.length; a++) {
-        for (let b = a; b < particlesArray.length; b++) {
-            let distance = ((particlesArray[a].x - particlesArray[b].x) 
-            * (particlesArray[a].x - particlesArray[b].x))
-            + ((particlesArray[a].y - particlesArray[b].y) *
-             (particlesArray[a].y) - particlesArray[b].y);
-             if (distance < (canvas.width/7) * (canvas.height/7)) {
-                ctx.strokeStyle = 'rgba(133, 230, 212)';
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
-                ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
-                ctx.stroke();
-             }
-        }
-
-    }
-}
+// resize event
+window.addEventListener('resize', function(){
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+    mouse.radius = ((canvas.height/80) * (canvas.height/80));
+    init();
+});
 
 init();
 animate();
