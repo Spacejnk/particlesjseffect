@@ -65,14 +65,46 @@ class Particle {
             if (mouse.y > this.y && this.y > this.size * 10) {
                 this.y -=  10
             }
-            // move the particle
-            this.x += this.directionX;
-            this.y += this.directionY;
-            // draw particle
-            this.draw()
+            
         }
+        // move the particle
+        this.x += this.directionX;
+        this.y += this.directionY;
+        // draw particle
+        this.draw()
     }
 
 }
+
+// create particle array
+function init() {
+    particlesArray = [];
+    let numberOfParticles = (canvas.height * canvas.width) / 9000;
+    for (let i = 0; i < numberOfParticles; i++) {
+        let size = (Math.random() * 5) + 1;
+        let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+        let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+        let directionX = (Math.random() * 5) - 2.5;
+        let directionY = (Math.random() * 5) - 2.5;
+        let color = '#85e6d4';
+
+        particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+
+    }
+}
+
+// animation loop
+function animate() {
+    requestAnimationFrame(animate);
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+
+    for(let i = 0; i < particlesArray.length; i++) {
+        particlesArray[i].update();
+    }
+}
+
+init();
+animate();
+
 
 
